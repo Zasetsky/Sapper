@@ -4,7 +4,7 @@
   <div v-for="(item, index) in items" :key="index"
   class="cell" :class="{active: item.isActive}"
   @click="checkCell(item)">{{ item }}</div>
-  <div><button @click="random()"></button></div>
+  <div><button @click.once="random()"></button></div>
  </div>
  <h1 v-if="loseMsg.val === 1" class="game-result">You Lose!</h1>
 </div>
