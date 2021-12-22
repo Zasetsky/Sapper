@@ -6,7 +6,7 @@
   @click="checkCell(item)">{{ item }}</div>
   <div><button @click.once="random()"></button></div>
  </div>
- <h1 v-if="loseMsg.val === 1" class="game-result">You Lose!</h1>
+ <h1 v-if="loseMsg === true" class="game-result">You Lose!</h1>
 </div>
 </template>
 
@@ -16,17 +16,17 @@ export default {
   name: 'Sapper',
   data() {
     return {
-      loseMsg: { val: 0 },
+      loseMsg: false,
       items: [
-        { val: 0, isActive: false },
-        { val: 0, isActive: false },
-        { val: 0, isActive: false },
-        { val: 0, isActive: false },
-        { val: 0, isActive: false },
-        { val: 0, isActive: false },
-        { val: 0, isActive: false },
-        { val: 0, isActive: false },
-        { val: 0, isActive: false },
+        { bomb: false, isActive: false },
+        { bomb: false, isActive: false },
+        { bomb: false, isActive: false },
+        { bomb: false, isActive: false },
+        { bomb: false, isActive: false },
+        { bomb: false, isActive: false },
+        { bomb: false, isActive: false },
+        { bomb: false, isActive: false },
+        { bomb: false, isActive: false },
       ],
     };
   },
@@ -34,10 +34,10 @@ export default {
   },
   methods: {
     checkCell(item) {
-      if (item.val === 0 && this.loseMsg.val === 0 && item.isActive === false) {
+      if (item.bomb === false && this.loseMsg === false && item.isActive === false) {
         item.isActive = true;
-      } else if (item.val > 0) {
-        this.loseMsg.val = 1;
+      } else if (item.bomb === true) {
+        this.loseMsg = true;
       }
     },
     random() {
@@ -47,7 +47,7 @@ export default {
       }
       for (let index = 0; index < this.items.length; index += 1) {
         if (randomIndexes.includes(index)) {
-          this.items[index].val = 1;
+          this.items[index].bomb = true;
         }
       }
       console.log(randomIndexes);
