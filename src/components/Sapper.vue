@@ -4,8 +4,8 @@
   <div v-for="(item, index) in items" :key="index"
   class="cell" :class="{active: item.isActive}"
   @click="checkCell(item)">{{ item }}</div>
-  <div><button @click.once="random()"></button></div>
  </div>
+ <div ><button class="game-start-btn" @click.once="startGame()">Start</button></div>
  <h1 v-if="loseMsg === true" class="game-result">You Lose!</h1>
 </div>
 </template>
@@ -18,15 +18,15 @@ export default {
     return {
       loseMsg: false,
       items: [
-        { bomb: false, isActive: false },
-        { bomb: false, isActive: false },
-        { bomb: false, isActive: false },
-        { bomb: false, isActive: false },
-        { bomb: false, isActive: false },
-        { bomb: false, isActive: false },
-        { bomb: false, isActive: false },
-        { bomb: false, isActive: false },
-        { bomb: false, isActive: false },
+        { bomb: false, isActive: true },
+        { bomb: false, isActive: true },
+        { bomb: false, isActive: true },
+        { bomb: false, isActive: true },
+        { bomb: false, isActive: true },
+        { bomb: false, isActive: true },
+        { bomb: false, isActive: true },
+        { bomb: false, isActive: true },
+        { bomb: false, isActive: true },
       ],
     };
   },
@@ -40,7 +40,7 @@ export default {
         this.loseMsg = true;
       }
     },
-    random() {
+    startGame() {
       const randomIndexes = new Array(2);
       for (let i = 0; i < randomIndexes.length; i += 1) {
         randomIndexes[i] = Math.floor(Math.random() * 9);
@@ -48,9 +48,10 @@ export default {
       for (let index = 0; index < this.items.length; index += 1) {
         if (randomIndexes.includes(index)) {
           this.items[index].bomb = true;
+        } if (this.items[index].isActive === true) {
+          this.items[index].isActive = false;
         }
       }
-      console.log(randomIndexes);
     },
   },
 };
@@ -69,9 +70,18 @@ export default {
   padding: 40px;
   color: black;
   font-size: 0;
+  cursor: pointer;
 }
+
 .cell.active {
   background-color: grey;
+  pointer-events: none;
+}
+.game-start-btn {
+  width: 60px;
+  height: 20px;
+  margin-top: 10px;
+  cursor: pointer;
 }
 .game-result {
   text-align: center;
