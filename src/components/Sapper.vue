@@ -35,7 +35,6 @@ export default {
   methods: {
     checkCell(item) {
       if (item.val === 0 && this.loseMsg.val === 0 && item.isActive === false) {
-        // eslint-disable-next-line no-param-reassign
         item.isActive = true;
       } else if (item.val > 0) {
         this.loseMsg.val = 1;
@@ -43,12 +42,10 @@ export default {
     },
     random() {
       const randomIndexes = new Array(2);
-      // eslint-disable-next-line no-plusplus
-      for (let i = 0; i < randomIndexes.length; i++) {
+      for (let i = 0; i < randomIndexes.length; i += 1) {
         randomIndexes[i] = Math.floor(Math.random() * 9);
       }
-      // eslint-disable-next-line no-plusplus
-      for (let index = 0; index < this.items.length; index++) {
+      for (let index = 0; index < this.items.length; index += 1) {
         if (randomIndexes.includes(index)) {
           this.items[index].val = 1;
         }
@@ -59,7 +56,6 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .field {
   display: grid;
