@@ -5,7 +5,8 @@
   class="cell" :class="{active: item.isActive}"
   @click="checkCell(item)">{{ item }}</div>
  </div>
- <div ><button class="game-start-btn" @click.once="startGame()">Start</button></div>
+ <div ><button class="start-btn" @click.once="startGame()">Start</button></div>
+ <!-- <div ><button class="restart-btn" @click="restartGame()">Restart</button></div> -->
  <h1 v-if="loseMsg === true" class="game-result">You Lose!</h1>
 </div>
 </template>
@@ -53,6 +54,22 @@ export default {
         }
       }
     },
+    // resetGame() {
+    //   const randomIndexes = new Array(2);
+    //   for (let i = 0; i < randomIndexes.length; i += 1) {
+    //     randomIndexes[i] = Math.floor(Math.random() * 9);
+    //   }
+    //   for (let index = 0; index < this.items.length; index += 1) {
+    //     if (randomIndexes.includes(index)) {
+    //       this.items[index].bomb = true;
+    //     } if (this.items[index].isActive === true) {
+    //       this.items[index].isActive = false;
+    //     } else if (this.loseMsg === true) {
+    //       this.loseMsg = false;
+    //       console.log(this.loseMsg);
+    //     }
+    //   }
+    // },
   },
 };
 </script>
@@ -77,7 +94,7 @@ export default {
   background-color: grey;
   pointer-events: none;
 }
-.game-start-btn {
+.start-btn {
   width: 60px;
   height: 20px;
   margin-top: 10px;
