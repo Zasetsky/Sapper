@@ -7,7 +7,8 @@
  </div>
  <div ><button class="start-btn" @click.once="startGame()">Start</button></div>
  <!-- <div ><button class="restart-btn" @click="restartGame()">Restart</button></div> -->
- <h1 v-if="loseMsg === true" class="game-result">You Lose!</h1>
+ <h1 v-if="loseMsg === true" class="gameower">You Lose</h1>
+ <h1 v-if="winMsg === true" class="game-win">You Win!</h1>
 </div>
 </template>
 
@@ -18,6 +19,7 @@ export default {
   data() {
     return {
       loseMsg: false,
+      winMsg: false,
       items: [
         { bomb: false, isActive: true },
         { bomb: false, isActive: true },
@@ -46,6 +48,11 @@ export default {
       for (let i = 0; i < randomIndexes.length; i += 1) {
         randomIndexes[i] = Math.floor(Math.random() * 9);
       }
+      for (let i = 0; i < randomIndexes.length; i += 1) {
+        while (randomIndexes[0] === randomIndexes[1]) {
+          randomIndexes[i] = Math.floor(Math.random() * 9);
+        }
+      }
       for (let index = 0; index < this.items.length; index += 1) {
         if (randomIndexes.includes(index)) {
           this.items[index].bomb = true;
@@ -70,6 +77,13 @@ export default {
     //     }
     //   }
     // },
+    winGame() {
+      for (let i = 0; i < this.items.length; i += 1) {
+        if (this.items[i].isActive === false && this.items[i].bomb === false === null) {
+          this.winMsg = true;
+        }
+      }
+    },
   },
 };
 </script>
@@ -100,7 +114,7 @@ export default {
   margin-top: 10px;
   cursor: pointer;
 }
-.game-result {
+.gameower {
   text-align: center;
 }
 </style>
