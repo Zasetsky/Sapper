@@ -39,13 +39,21 @@ export default {
   },
   methods: {
     checkCell(item) {
+      let g = 0;
       if (item.bomb === false && this.loseMsg === false && item.isActive === false) {
         item.isActive = true;
       } if (item.bomb === true && this.winMsg === false) {
         this.loseMsg = true;
         this.isDisabled = true;
+      } for (let i = 0; i < this.items.length; i += 1) {
+        if (this.items[i].isActive === true) {
+          g += 1;
+        } if (g === this.items.length - this.randomIndexes.length) {
+          this.winMsg = true;
+          this.isDisabled = true;
+        }
+        console.log(this.winMsg);
       }
-      console.log(this.winMsg);
     },
     startGame() {
       for (let i = 0; i < this.randomIndexes.length; i += 1) {
