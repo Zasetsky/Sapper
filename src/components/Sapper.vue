@@ -1,5 +1,7 @@
 <template>
 <div>
+  <button class="btn-field" @click="createField(9)">3x3</button>
+  <button class="btn-field" @click="createField(36)">6x6</button>
  <div class="field" :class="{disabled: isDisabled}">
   <div v-for="(item, index) in items" :key="index"
   class="cell" :class="{active: item.isActive}"
@@ -22,22 +24,17 @@ export default {
       loseMsg: false,
       winMsg: false,
       isDisabled: false,
-      items: [
-        { bomb: false, isActive: true },
-        { bomb: false, isActive: true },
-        { bomb: false, isActive: true },
-        { bomb: false, isActive: true },
-        { bomb: false, isActive: true },
-        { bomb: false, isActive: true },
-        { bomb: false, isActive: true },
-        { bomb: false, isActive: true },
-        { bomb: false, isActive: true },
-      ],
+      items: [],
     };
   },
   computed: {
   },
   methods: {
+    createField(fieldLength) {
+      for (let i = 0; i < fieldLength; i += 1) {
+        this.items.push({ bomb: false, isActive: true });
+      }
+    },
     checkCell(item) {
       let g = 0;
       if (item.bomb === false && this.loseMsg === false && item.isActive === false) {
