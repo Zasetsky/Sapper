@@ -1,6 +1,6 @@
 <template>
 <div>
- <div class="field">
+ <div class="field" :class="{disabled: isDisabled}">
   <div v-for="(item, index) in items" :key="index"
   class="cell" :class="{active: item.isActive}"
   @click="checkCell(item)">{{ item }}</div>
@@ -18,8 +18,10 @@ export default {
   name: 'Sapper',
   data() {
     return {
+      randomIndexes: new Array(2),
       loseMsg: false,
       winMsg: false,
+      isDisabled: false,
       items: [
         { bomb: false, isActive: true },
         { bomb: false, isActive: true },
@@ -39,27 +41,29 @@ export default {
     checkCell(item) {
       if (item.bomb === false && this.loseMsg === false && item.isActive === false) {
         item.isActive = true;
-      } else if (item.bomb === true) {
+      } if (item.bomb === true && this.winMsg === false) {
         this.loseMsg = true;
+        this.isDisabled = true;
       }
+      console.log(this.winMsg);
     },
     startGame() {
-      const randomIndexes = new Array(2);
-      for (let i = 0; i < randomIndexes.length; i += 1) {
-        randomIndexes[i] = Math.floor(Math.random() * 9);
+      for (let i = 0; i < this.randomIndexes.length; i += 1) {
+        this.randomIndexes[i] = Math.floor(Math.random() * 9);
       }
-      for (let i = 0; i < randomIndexes.length; i += 1) {
-        while (randomIndexes[0] === randomIndexes[1]) {
-          randomIndexes[i] = Math.floor(Math.random() * 9);
+      for (let i = 0; i < this.randomIndexes.length; i += 1) {
+        while (this.randomIndexes[0] === this.randomIndexes[1]) {
+          this.randomIndexes[i] = Math.floor(Math.random() * 9);
         }
       }
       for (let index = 0; index < this.items.length; index += 1) {
-        if (randomIndexes.includes(index)) {
+        if (this.randomIndexes.includes(index)) {
           this.items[index].bomb = true;
         } if (this.items[index].isActive === true) {
           this.items[index].isActive = false;
         }
       }
+      console.log(this.randomIndexes);
     },
     // resetGame() {
     //   const randomIndexes = new Array(2);
@@ -77,13 +81,6 @@ export default {
     //     }
     //   }
     // },
-    winGame() {
-      for (let i = 0; i < this.items.length; i += 1) {
-        if (this.items[i].isActive === false && this.items[i].bomb === false === null) {
-          this.winMsg = true;
-        }
-      }
-    },
   },
 };
 </script>
@@ -95,6 +92,9 @@ export default {
   grid-row-gap: 2px;
   grid-column-gap: 2px;
   justify-content: center;
+}
+.field.disabled {
+  pointer-events: none;
 }
 .cell {
   background-color: black;
