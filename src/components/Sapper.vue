@@ -1,7 +1,6 @@
 <template>
 <div>
   <button class="btn-field" @click="createField(9)">3x3</button>
-  <button class="btn-field" @click="createField(36)">6x6</button>
  <div class="field" :class="{disabled: isDisabled}">
   <div v-for="(item, index) in items" :key="index"
   class="cell" :class="{active: item.isActive}"
