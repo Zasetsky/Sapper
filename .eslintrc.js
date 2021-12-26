@@ -16,6 +16,7 @@ module.exports = {
     'linebreak-style': 0,
     'operator-linebreak': 0,
     'no-return-assign': 0,
-    'vue/require-v-for-key': 'off',
+    'no-param-reassign': 0,
+    'no-plusplus': { "allowForLoopAfterthoughts": true },
   },
 };
