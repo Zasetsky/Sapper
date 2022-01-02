@@ -30,8 +30,10 @@ export default {
   },
   methods: {
     createField(fieldLength) {
-      for (let i = 0; i < fieldLength; i += 1) {
-        this.items.push({ bomb: false, isActive: true });
+      if (this.items < fieldLength) {
+        for (let i = 0; i < fieldLength; i += 1) {
+          this.items.push({ bomb: false, isActive: true });
+        }
       }
     },
     checkCell(item) {
