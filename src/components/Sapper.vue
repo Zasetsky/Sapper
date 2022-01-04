@@ -1,6 +1,6 @@
 <template>
 <div>
-  <button class="btn-field" @click="createField(9)">3x3</button>
+  <button class="btn-field" v-if="!items.length" @click="createField(fieldLength)">3x3</button>
  <div class="field" :class="{disabled: isDisabled}">
   <div v-for="(item, index) in items" :key="index"
   class="cell" :class="{active: item.isActive}"
@@ -13,16 +13,16 @@
 </template>
 
 <script>
-
 export default {
   name: 'Sapper',
   data() {
     return {
-      randomIndexes: new Array(2),
+      randomIndexes: [],
       loseMsg: false,
       winMsg: false,
       isDisabled: false,
       items: [],
+      fieldLength: 9,
     };
   },
   computed: {
@@ -35,11 +35,11 @@ export default {
         this.items.push({ bomb: false, isActive: false });
       }
       for (let i = 0; i < this.randomIndexes.length; i += 1) {
-        this.randomIndexes[i] = Math.floor(Math.random() * 9);
+        this.randomIndexes[i] = Math.floor(Math.random() * this.fieldLength);
       }
       for (let i = 0; i < this.randomIndexes.length; i += 1) {
         while (this.randomIndexes[0] === this.randomIndexes[1]) {
-          this.randomIndexes[i] = Math.floor(Math.random() * 9);
+          this.randomIndexes[i] = Math.floor(Math.random() * this.fieldLength);
         }
       }
       for (let index = 0; index < this.items.length; index += 1) {
@@ -47,6 +47,7 @@ export default {
           this.items[index].bomb = true;
         }
       }
+      console.log(this.randomIndexes);
     },
     checkCell(item) {
       if (!item.bomb && !this.loseMsg && !item.isActive) {
@@ -64,7 +65,6 @@ export default {
           this.winMsg = true;
           this.isDisabled = true;
         }
-        console.log(this.winMsg);
       }
     },
     resetGame() {
@@ -72,7 +72,6 @@ export default {
       this.loseMsg = false;
       this.winMsg = false;
       this.isDisabled = false;
-      console.log(this.randomIndexes);
     },
   },
 };
