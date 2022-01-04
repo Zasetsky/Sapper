@@ -6,8 +6,7 @@
   class="cell" :class="{active: item.isActive}"
   @click="checkCell(item)">{{ item }}</div>
  </div>
- <div ><button class="start-btn" @click.once="startGame()">Start</button></div>
- <!-- <div ><button class="restart-btn" @click="restartGame()">Restart</button></div> -->
+ <div ><button class="start-btn" @click="resetGame()">Restart</button></div>
  <h1 v-if="loseMsg === true" class="gameower">You Lose</h1>
  <h1 v-if="winMsg === true" class="game-win">You Win!</h1>
 </div>
@@ -29,10 +28,23 @@ export default {
   computed: {
   },
   methods: {
-    createField(fieldLength) {
-      if (this.items < fieldLength) {
-        for (let i = 0; i < fieldLength; i += 1) {
-          this.items.push({ bomb: false, isActive: true });
+    createField(fieldLengthX) {
+      this.items = [];
+      this.randomIndexes = new Array(2);
+      for (let i = 0; i < fieldLengthX; i += 1) {
+        this.items.push({ bomb: false, isActive: false });
+      }
+      for (let i = 0; i < this.randomIndexes.length; i += 1) {
+        this.randomIndexes[i] = Math.floor(Math.random() * 9);
+      }
+      for (let i = 0; i < this.randomIndexes.length; i += 1) {
+        while (this.randomIndexes[0] === this.randomIndexes[1]) {
+          this.randomIndexes[i] = Math.floor(Math.random() * 9);
+        }
+      }
+      for (let index = 0; index < this.items.length; index += 1) {
+        if (this.randomIndexes.includes(index)) {
+          this.items[index].bomb = true;
         }
       }
     },
@@ -53,40 +65,13 @@ export default {
         console.log(this.winMsg);
       }
     },
-    startGame() {
-      for (let i = 0; i < this.randomIndexes.length; i += 1) {
-        this.randomIndexes[i] = Math.floor(Math.random() * 9);
-      }
-      for (let i = 0; i < this.randomIndexes.length; i += 1) {
-        while (this.randomIndexes[0] === this.randomIndexes[1]) {
-          this.randomIndexes[i] = Math.floor(Math.random() * 9);
-        }
-      }
-      for (let index = 0; index < this.items.length; index += 1) {
-        if (this.randomIndexes.includes(index)) {
-          this.items[index].bomb = true;
-        } if (this.items[index].isActive === true) {
-          this.items[index].isActive = false;
-        }
-      }
+    resetGame() {
+      this.createField(this.items.length);
+      this.loseMsg = false;
+      this.winMsg = false;
+      this.isDisabled = false;
       console.log(this.randomIndexes);
     },
-    // resetGame() {
-    //   const randomIndexes = new Array(2);
-    //   for (let i = 0; i < randomIndexes.length; i += 1) {
-    //     randomIndexes[i] = Math.floor(Math.random() * 9);
-    //   }
-    //   for (let index = 0; index < this.items.length; index += 1) {
-    //     if (randomIndexes.includes(index)) {
-    //       this.items[index].bomb = true;
-    //     } if (this.items[index].isActive === true) {
-    //       this.items[index].isActive = false;
-    //     } else if (this.loseMsg === true) {
-    //       this.loseMsg = false;
-    //       console.log(this.loseMsg);
-    //     }
-    //   }
-    // },
   },
 };
 </script>
@@ -104,7 +89,7 @@ export default {
 }
 .cell {
   background-color: black;
-  padding: 40px;
+  padding: 25px;
   color: black;
   font-size: 0;
   cursor: pointer;
