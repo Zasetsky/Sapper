@@ -7,8 +7,8 @@
   @click="checkCell(item)">{{ item }}</div>
  </div>
  <div ><button class="start-btn" @click="resetGame()">Restart</button></div>
- <h1 v-if="loseMsg === true" class="gameower">You Lose</h1>
- <h1 v-if="winMsg === true" class="game-win">You Win!</h1>
+ <h1 v-if="loseMsg" class="gameower">You Lose</h1>
+ <h1 v-else-if="winMsg" class="game-win">You Win!</h1>
 </div>
 </template>
 
@@ -49,16 +49,18 @@ export default {
       }
     },
     checkCell(item) {
-      let g = 0;
-      if (item.bomb === false && this.loseMsg === false && item.isActive === false) {
+      if (!item.bomb && !this.loseMsg && !item.isActive) {
         item.isActive = true;
-      } if (item.bomb === true && this.winMsg === false) {
+      } else if (item.bomb && !this.winMsg) {
         this.loseMsg = true;
         this.isDisabled = true;
-      } for (let i = 0; i < this.items.length; i += 1) {
-        if (this.items[i].isActive === true) {
-          g += 1;
-        } if (g === this.items.length - this.randomIndexes.length) {
+      }
+      let openItemsLength = 0;
+      for (let i = 0; i < this.items.length; i += 1) {
+        if (this.items[i].isActive) {
+          openItemsLength += 1;
+        }
+        if (openItemsLength === this.items.length - this.randomIndexes.length) {
           this.winMsg = true;
           this.isDisabled = true;
         }
