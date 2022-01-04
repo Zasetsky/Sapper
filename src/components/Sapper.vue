@@ -1,11 +1,14 @@
 <template>
 <div>
-  <button class="btn-field" v-if="!items.length" @click="createField(fieldLength)">3x3</button>
+  <button class="btn-field" v-if="!items.length" @click="createField(fieldLengthX, fieldLengthY)">3x3</button>
  <div class="field" :class="{disabled: isDisabled}">
-  <div v-for="(item, index) in items" :key="index"
-  class="cell" :class="{active: item.isActive}"
-  @click="checkCell(item)">{{ item }}</div>
- </div>
+    <div class="row" v-for="(row, rowIndex) in items" :key="rowIndex">
+      <div v-for="(item, index) in row" :key="index"
+           class="cell" :class="{active: item.isActive}"
+           @click="checkCell(item)">
+      </div>
+    </div>
+  </div>
  <div ><button class="start-btn" @click="resetGame()">Restart</button></div>
  <h1 v-if="loseMsg" class="gameower">You Lose</h1>
  <h1 v-else-if="winMsg" class="game-win">You Win!</h1>
@@ -13,43 +16,45 @@
 </template>
 
 <script>
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
+
 export default {
   name: 'Sapper',
   data() {
     return {
-      randomIndexes: [],
       loseMsg: false,
       winMsg: false,
       isDisabled: false,
       items: [],
-      fieldLength: 9,
+      fieldLengthX: 3,
+      fieldLengthY: 3,
+      bombsCount: 2,
     };
   },
   computed: {
   },
   methods: {
-    createField(fieldLengthX, fieldLengthY) {
+    createField(lengthX, lengthY) {
       this.items = [];
-      this.randomIndexes = new Array(2);
-      for (let i = 0; i < fieldLengthX; i++) {
-        for (let j = 0; j < fieldLengthY; j++) {
-          this.items.push({ bomb: false, isActive: false });
+      for (let i = 0; i < lengthY; i++) {
+        const row = [];
+        for (let j = 0; j < lengthX; j++) {
+          row.push({ bomb: false, isActive: false });
+        }
+        this.items.push(row);
+      }
+
+      for (let bombsPlanted = 0; bombsPlanted < this.bombsCount;) {
+        const x = getRandomInt(lengthX);
+        const y = getRandomInt(lengthY);
+        if (!this.items[y][x].bomb) {
+          this.items[y][x].bomb = true;
+          bombsPlanted++;
+          console.log({ y, x });
         }
       }
-      for (let i = 0; i < this.randomIndexes.length; i++) {
-        this.randomIndexes[i] = Math.floor(Math.random() * this.fieldLength);
-      }
-      for (let i = 0; i < this.randomIndexes.length; i++) {
-        while (this.randomIndexes[0] === this.randomIndexes[1]) {
-          this.randomIndexes[i] = Math.floor(Math.random() * this.fieldLength);
-        }
-      }
-      for (let index = 0; index < this.items.length; index++) {
-        if (this.randomIndexes.includes(index)) {
-          this.items[index].bomb = true;
-        }
-      }
-      console.log(this.randomIndexes);
     },
     checkCell(item) {
       if (!item.bomb && !this.loseMsg && !item.isActive) {
@@ -58,19 +63,26 @@ export default {
         this.loseMsg = true;
         this.isDisabled = true;
       }
+
       let openItemsLength = 0;
-      for (let i = 0; i < this.items.length; i++) {
-        if (this.items[i].isActive) {
-          openItemsLength++;
-        }
-        if (openItemsLength === this.items.length - this.randomIndexes.length) {
-          this.winMsg = true;
-          this.isDisabled = true;
+      const cellsCount = this.fieldLengthX * this.fieldLengthY;
+      for (let y = 0; y < this.items.length; y++) {
+        const row = this.items[y];
+        for (let x = 0; x < row.length; x++) {
+          if (row[x].isActive) {
+            openItemsLength++;
+          }
         }
       }
+
+      if (openItemsLength === cellsCount - this.bombsCount) {
+        this.winMsg = true;
+        this.isDisabled = true;
+      }
     },
+
     resetGame() {
-      this.createField(this.items.length);
+      this.createField(this.fieldLengthX, this.fieldLengthY);
       this.loseMsg = false;
       this.winMsg = false;
       this.isDisabled = false;
@@ -81,18 +93,20 @@ export default {
 
 <style scoped>
 .field {
-  display: grid;
-  grid-template-columns: auto auto auto;
-  grid-row-gap: 2px;
-  grid-column-gap: 2px;
-  justify-content: center;
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
 }
 .field.disabled {
   pointer-events: none;
 }
+.row {
+  display: flex;
+}
 .cell {
   background-color: black;
   padding: 25px;
+  margin: 1px;
   color: black;
   font-size: 0;
   cursor: pointer;
