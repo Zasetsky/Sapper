@@ -18,5 +18,6 @@ module.exports = {
     'no-param-reassign': 0,
     'valid-typeof': 0,
     'max-len': 0,
+    'no-plusplus': 0,
   },
 };

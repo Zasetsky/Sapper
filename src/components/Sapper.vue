@@ -28,21 +28,23 @@ export default {
   computed: {
   },
   methods: {
-    createField(fieldLengthX) {
+    createField(fieldLengthX, fieldLengthY) {
       this.items = [];
       this.randomIndexes = new Array(2);
-      for (let i = 0; i < fieldLengthX; i += 1) {
-        this.items.push({ bomb: false, isActive: false });
+      for (let i = 0; i < fieldLengthX; i++) {
+        for (let j = 0; j < fieldLengthY; j++) {
+          this.items.push({ bomb: false, isActive: false });
+        }
       }
-      for (let i = 0; i < this.randomIndexes.length; i += 1) {
+      for (let i = 0; i < this.randomIndexes.length; i++) {
         this.randomIndexes[i] = Math.floor(Math.random() * this.fieldLength);
       }
-      for (let i = 0; i < this.randomIndexes.length; i += 1) {
+      for (let i = 0; i < this.randomIndexes.length; i++) {
         while (this.randomIndexes[0] === this.randomIndexes[1]) {
           this.randomIndexes[i] = Math.floor(Math.random() * this.fieldLength);
         }
       }
-      for (let index = 0; index < this.items.length; index += 1) {
+      for (let index = 0; index < this.items.length; index++) {
         if (this.randomIndexes.includes(index)) {
           this.items[index].bomb = true;
         }
@@ -57,9 +59,9 @@ export default {
         this.isDisabled = true;
       }
       let openItemsLength = 0;
-      for (let i = 0; i < this.items.length; i += 1) {
+      for (let i = 0; i < this.items.length; i++) {
         if (this.items[i].isActive) {
-          openItemsLength += 1;
+          openItemsLength++;
         }
         if (openItemsLength === this.items.length - this.randomIndexes.length) {
           this.winMsg = true;
