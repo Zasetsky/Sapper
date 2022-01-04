@@ -16,5 +16,7 @@ module.exports = {
     'linebreak-style': 0,
     'operator-linebreak': 0,
     'no-param-reassign': 0,
+    'valid-typeof': 0,
+    'max-len': 0,
   },
 };
