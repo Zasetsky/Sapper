@@ -5,7 +5,8 @@
     <div class="row" v-for="(row, rowIndex) in items" :key="rowIndex">
       <div v-for="(item, index) in row" :key="index"
            class="cell" :class="{active: item.isActive}"
-           @click="checkCell(index, rowIndex)">{{ item.bombsCountAround }}</div>
+           @click="checkCell(index, rowIndex)">
+      </div>
     </div>
   </div>
  <div ><button class="start-btn" v-if="items.length" @click="resetGame()">Restart</button></div>
@@ -129,19 +130,15 @@ export default {
   display: flex;
 }
 .cell {
-  background-color: black;
-  padding: 20px;
-  width: 15px;
-  margin: 1px;
-  color: black;
-  font-size: 15px;
+  background: url('../data/images/Grid.png') no-repeat;
+  padding: 16px;
   cursor: pointer;
+  margin: 1px;
 }
 
 .cell.active {
-  background-color: grey;
+  background: url('../data/images/empty.png') no-repeat;
   pointer-events: none;
-  color: white;
 }
 .start-btn {
   width: 60px;

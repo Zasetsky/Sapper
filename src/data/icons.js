@@ -1,8 +1,6 @@
 const icons = require.context('./images', true, /\.png$/);
 
 const cells = {
-  empty: icons('./empty.png'),
-  grid: icons('./Grid.png'),
   flag: icons('./flag.png'),
   bomb: icons('./mine.png'),
   bombClicked: icons('./mineClicked.png'),
