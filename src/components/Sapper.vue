@@ -5,11 +5,10 @@
     <div class="row" v-for="(row, rowIndex) in items" :key="rowIndex">
       <div v-for="(item, index) in row" :key="index"
            class="cell" :class="{active: item.isActive}"
-           @click="checkCell(index, rowIndex)">
-      </div>
+           @click="checkCell(index, rowIndex)">{{ item.bombsCountAround }}</div>
     </div>
   </div>
- <div ><button class="start-btn" @click="resetGame()">Restart</button></div>
+ <div ><button class="start-btn" v-if="items.length" @click="resetGame()">Restart</button></div>
  <h1 v-if="loseMsg" class="gameower">You Lose</h1>
  <h1 v-else-if="winMsg" class="game-win">You Win!</h1>
 </div>
@@ -41,7 +40,7 @@ export default {
       for (let i = 0; i < lengthY; i++) {
         const row = [];
         for (let j = 0; j < lengthX; j++) {
-          row.push({ bomb: false, isActive: false });
+          row.push({ bomb: false, isActive: false, bombsCountAround: 0 });
         }
         this.items.push(row);
       }
@@ -52,7 +51,6 @@ export default {
         if (!this.items[y][x].bomb) {
           this.items[y][x].bomb = true;
           bombsPlanted++;
-          console.log({ y, x });
         }
       }
     },
@@ -93,8 +91,23 @@ export default {
       let bombsAround = 0;
       if (this.items[y - 1] && this.items[y - 1][x] && this.items[y - 1][x].bomb) {
         bombsAround++;
+      } if (this.items[y - 1] && this.items[y - 1][x - 1] && this.items[y - 1][x - 1].bomb) {
+        bombsAround++;
+      } if (this.items[y][x - 1] && this.items[y][x - 1].bomb) {
+        bombsAround++;
+      } if (this.items[y + 1] && this.items[y + 1][x - 1] && this.items[y + 1][x - 1].bomb) {
+        bombsAround++;
+      } if (this.items[y + 1] && this.items[y + 1][x] && this.items[y + 1][x].bomb) {
+        bombsAround++;
+      } if (this.items[y + 1] && this.items[y + 1][x + 1] && this.items[y + 1][x + 1].bomb) {
+        bombsAround++;
+      } if (this.items[y][x + 1] && this.items[y][x + 1].bomb) {
+        bombsAround++;
+      } if (this.items[y - 1] && this.items[y - 1][x + 1] && this.items[y - 1][x + 1].bomb) {
+        bombsAround++;
       }
-      this.items[y][x].bombsCount = bombsAround;
+      this.items[y][x].bombsCountAround = bombsAround;
+      console.log(this.items[y][x].bombsCountAround);
     },
   },
 };
@@ -117,13 +130,14 @@ export default {
   padding: 25px;
   margin: 1px;
   color: black;
-  font-size: 0;
+  font-size: 15px;
   cursor: pointer;
 }
 
 .cell.active {
   background-color: grey;
   pointer-events: none;
+  color: orange;
 }
 .start-btn {
   width: 60px;
