@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import './fa.config';
+import IconsForCells from '../data/icons';
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
@@ -25,6 +25,7 @@ export default {
   name: 'Sapper',
   data() {
     return {
+      IconsForCells,
       loseMsg: false,
       winMsg: false,
       isDisabled: false,
