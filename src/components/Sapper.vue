@@ -5,7 +5,7 @@
     <div class="row" v-for="(row, rowIndex) in items" :key="rowIndex">
       <div v-for="(item, index) in row" :key="index"
            class="cell" :class="{active: item.isActive}"
-           @click="checkCell(item)">
+           @click="checkCell(index, rowIndex)">
       </div>
     </div>
   </div>
@@ -56,9 +56,11 @@ export default {
         }
       }
     },
-    checkCell(item) {
+    checkCell(itemX, itemY) {
+      const item = this.items[itemY][itemX];
       if (!item.bomb && !this.loseMsg && !item.isActive) {
         item.isActive = true;
+        this.countBombsAround(itemX, itemY);
       } else if (item.bomb && !this.winMsg) {
         this.loseMsg = true;
         this.isDisabled = true;
@@ -86,6 +88,13 @@ export default {
       this.loseMsg = false;
       this.winMsg = false;
       this.isDisabled = false;
+    },
+    countBombsAround(x, y) {
+      let bombsAround = 0;
+      if (this.items[y - 1] && this.items[y - 1][x] && this.items[y - 1][x].bomb) {
+        bombsAround++;
+      }
+      this.items[y][x].bombsCount = bombsAround;
     },
   },
 };
