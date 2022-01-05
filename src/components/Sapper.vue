@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import './fa.config';
+
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
@@ -29,7 +31,7 @@ export default {
       items: [],
       fieldLengthX: 3,
       fieldLengthY: 3,
-      bombsCount: 2,
+      bombsCount: 3,
     };
   },
   computed: {
@@ -127,7 +129,8 @@ export default {
 }
 .cell {
   background-color: black;
-  padding: 25px;
+  padding: 20px;
+  width: 15px;
   margin: 1px;
   color: black;
   font-size: 15px;
@@ -137,7 +140,7 @@ export default {
 .cell.active {
   background-color: grey;
   pointer-events: none;
-  color: orange;
+  color: white;
 }
 .start-btn {
   width: 60px;
