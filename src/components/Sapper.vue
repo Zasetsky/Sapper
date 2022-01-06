@@ -1,11 +1,12 @@
 <template>
 <div>
-  <button class="btn-field" v-if="!items.length" @click="createField(fieldLengthX, fieldLengthY)">3x3</button>
+  <button class="btn-field" v-if="!items.length" @click="createField(fieldLengthX, fieldLengthY)">9x9</button>
  <div class="field" :class="{disabled: isDisabled}">
     <div class="row" v-for="(row, rowIndex) in items" :key="rowIndex">
       <div v-for="(item, index) in row" :key="index"
-           class="cell" :class="{active: item.isActive}"
-           @click="checkCell(index, rowIndex)">{{ item.bombsCountAround }}</div>
+           class="cell" :class="getCellClasses(item)"
+           @click="checkCell(index, rowIndex)">
+      </div>
     </div>
   </div>
  <div ><button class="start-btn" v-if="items.length" @click="resetGame()">Restart</button></div>
@@ -15,6 +16,7 @@
 </template>
 
 <script>
+
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
@@ -27,14 +29,14 @@ export default {
       winMsg: false,
       isDisabled: false,
       items: [],
-      fieldLengthX: 3,
-      fieldLengthY: 3,
-      bombsCount: 2,
+      fieldLengthX: 9,
+      fieldLengthY: 9,
+      bombsCount: 8,
     };
   },
-  computed: {
-  },
+
   methods: {
+
     createField(lengthX, lengthY) {
       this.items = [];
       for (let i = 0; i < lengthY; i++) {
@@ -54,12 +56,13 @@ export default {
         }
       }
     },
+
     checkCell(itemX, itemY) {
       const item = this.items[itemY][itemX];
-      if (!item.bomb && !this.loseMsg && !item.isActive) {
+      if (!this.loseMsg && !item.isActive) {
         item.isActive = true;
         this.countBombsAround(itemX, itemY);
-      } else if (item.bomb && !this.winMsg) {
+      } if (item.bomb && !this.winMsg) {
         this.loseMsg = true;
         this.isDisabled = true;
       }
@@ -87,6 +90,7 @@ export default {
       this.winMsg = false;
       this.isDisabled = false;
     },
+
     countBombsAround(x, y) {
       let bombsAround = 0;
       if (this.items[y - 1] && this.items[y - 1][x] && this.items[y - 1][x].bomb) {
@@ -107,7 +111,26 @@ export default {
         bombsAround++;
       }
       this.items[y][x].bombsCountAround = bombsAround;
-      console.log(this.items[y][x].bombsCountAround);
+    },
+
+    getBombsCountClass(cell) {
+      if (cell.bombsCountAround === 0) {
+        return 'empty';
+      }
+      return `grid${cell.bombsCountAround}`;
+    },
+
+    getCellClasses(cell) {
+      const classes = [];
+      if (cell.isActive) {
+        classes.push('active');
+        if (cell.bomb) {
+          classes.push('bomb');
+        } else {
+          classes.push(this.getBombsCountClass(cell));
+        }
+      }
+      return classes;
     },
   },
 };
@@ -126,18 +149,43 @@ export default {
   display: flex;
 }
 .cell {
-  background-color: black;
-  padding: 25px;
-  margin: 1px;
-  color: black;
-  font-size: 15px;
+  background: url('../data/images/Grid.png') no-repeat;
+  padding: 16px;
   cursor: pointer;
+  margin: 1px;
 }
-
 .cell.active {
-  background-color: grey;
   pointer-events: none;
-  color: orange;
+}
+.empty {
+  background: url('../data/images/empty.png') no-repeat;
+}
+.grid1 {
+  background: url('../data/images/grid1.png') no-repeat;
+}
+.grid2 {
+  background: url('../data/images/grid2.png') no-repeat;
+}
+.grid3 {
+  background: url('../data/images/grid3.png') no-repeat;
+}
+.grid4 {
+  background: url('../data/images/grid4.png') no-repeat;
+}
+.grid5 {
+  background: url('../data/images/grid5.png') no-repeat;
+}
+.grid6 {
+  background: url('../data/images/grid6.png') no-repeat;
+}
+.grid7 {
+  background: url('../data/images/grid7.png') no-repeat;
+}
+.grid8 {
+  background: url('../data/images/grid8.png') no-repeat;
+}
+.bomb {
+  background: url('../data/images/mineClicked.png') no-repeat;
 }
 .start-btn {
   width: 60px;
