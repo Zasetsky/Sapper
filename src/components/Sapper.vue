@@ -4,7 +4,7 @@
  <div class="field" :class="{disabled: isDisabled}">
     <div class="row" v-for="(row, rowIndex) in items" :key="rowIndex">
       <div v-for="(item, index) in row" :key="index"
-           class="cell" :class="{active: item.isActive}"
+           class="cell" :class="getCellClasses(item)"
            @click="checkCell(index, rowIndex)">
       </div>
     </div>
@@ -33,12 +33,13 @@ export default {
       items: [],
       fieldLengthX: 3,
       fieldLengthY: 3,
-      bombsCount: 3,
+      bombsCount: 2,
     };
   },
   computed: {
   },
   methods: {
+
     createField(lengthX, lengthY) {
       this.items = [];
       for (let i = 0; i < lengthY; i++) {
@@ -58,12 +59,13 @@ export default {
         }
       }
     },
+
     checkCell(itemX, itemY) {
       const item = this.items[itemY][itemX];
-      if (!item.bomb && !this.loseMsg && !item.isActive) {
+      if (!this.loseMsg && !item.isActive) {
         item.isActive = true;
         this.countBombsAround(itemX, itemY);
-      } else if (item.bomb && !this.winMsg) {
+      } if (item.bomb && !this.winMsg) {
         this.loseMsg = true;
         this.isDisabled = true;
       }
@@ -91,6 +93,7 @@ export default {
       this.winMsg = false;
       this.isDisabled = false;
     },
+
     countBombsAround(x, y) {
       let bombsAround = 0;
       if (this.items[y - 1] && this.items[y - 1][x] && this.items[y - 1][x].bomb) {
@@ -111,7 +114,25 @@ export default {
         bombsAround++;
       }
       this.items[y][x].bombsCountAround = bombsAround;
-      console.log(this.items[y][x].bombsCountAround);
+    },
+
+    getBombsCountClass(cell) {
+      if (cell.bombsCountAround === 0) {
+        return 'empty';
+      }
+      return `grid${cell.bombsCountAround}`;
+    },
+    getCellClasses(cell) {
+      const classes = [];
+      if (cell.isActive) {
+        classes.push('active');
+        if (cell.bomb) {
+          classes.push('bomb');
+        } else {
+          classes.push(this.getBombsCountClass(cell));
+        }
+      }
+      return classes;
     },
   },
 };
@@ -135,10 +156,26 @@ export default {
   cursor: pointer;
   margin: 1px;
 }
-
 .cell.active {
-  background: url('../data/images/empty.png') no-repeat;
   pointer-events: none;
+}
+.empty {
+  background: url('../data/images/empty.png') no-repeat;
+}
+.grid1 {
+  background: url('../data/images/grid1.png') no-repeat;
+}
+.grid2 {
+  background: url('../data/images/grid2.png') no-repeat;
+}
+.grid3 {
+  background: url('../data/images/grid3.png') no-repeat;
+}
+.grid4 {
+  background: url('../data/images/grid4.png') no-repeat;
+}
+.bomb {
+  background: url('../data/images/mineClicked.png') no-repeat;
 }
 .start-btn {
   width: 60px;
