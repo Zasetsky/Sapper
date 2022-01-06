@@ -1,6 +1,6 @@
 <template>
 <div>
-  <button class="btn-field" v-if="!items.length" @click="createField(fieldLengthX, fieldLengthY)">3x3</button>
+  <button class="btn-field" v-if="!items.length" @click="createField(fieldLengthX, fieldLengthY)">9x9</button>
  <div class="field" :class="{disabled: isDisabled}">
     <div class="row" v-for="(row, rowIndex) in items" :key="rowIndex">
       <div v-for="(item, index) in row" :key="index"
@@ -16,7 +16,6 @@
 </template>
 
 <script>
-import IconsForCells from '../data/icons';
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
@@ -26,18 +25,16 @@ export default {
   name: 'Sapper',
   data() {
     return {
-      IconsForCells,
       loseMsg: false,
       winMsg: false,
       isDisabled: false,
       items: [],
-      fieldLengthX: 3,
-      fieldLengthY: 3,
-      bombsCount: 2,
+      fieldLengthX: 9,
+      fieldLengthY: 9,
+      bombsCount: 8,
     };
   },
-  computed: {
-  },
+
   methods: {
 
     createField(lengthX, lengthY) {
@@ -122,6 +119,7 @@ export default {
       }
       return `grid${cell.bombsCountAround}`;
     },
+
     getCellClasses(cell) {
       const classes = [];
       if (cell.isActive) {
@@ -173,6 +171,18 @@ export default {
 }
 .grid4 {
   background: url('../data/images/grid4.png') no-repeat;
+}
+.grid5 {
+  background: url('../data/images/grid5.png') no-repeat;
+}
+.grid6 {
+  background: url('../data/images/grid6.png') no-repeat;
+}
+.grid7 {
+  background: url('../data/images/grid7.png') no-repeat;
+}
+.grid8 {
+  background: url('../data/images/grid8.png') no-repeat;
 }
 .bomb {
   background: url('../data/images/mineClicked.png') no-repeat;
