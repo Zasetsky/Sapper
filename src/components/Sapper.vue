@@ -1,11 +1,11 @@
 <template>
 <div>
-  <button class="btn-field" v-if="!items.length" @click="createField(fieldLengthX, fieldLengthY)">9x9</button>
- <div class="field" :class="{disabled: isDisabled}">
+  <button class="btn-field" v-if="!items.length" @click="createField(fieldLengthX, fieldLengthY)">Start</button>
+ <div class="field" oncontextmenu="return false;" :class="{disabled: isDisabled}">
     <div class="row" v-for="(row, rowIndex) in items" :key="rowIndex">
       <div v-for="(item, index) in row" :key="index"
            class="cell" :class="getCellClasses(item)"
-           @click="checkCell(index, rowIndex)">
+           @click="checkCell(index, rowIndex)" @click.right="getFlag(index, rowIndex)">
       </div>
     </div>
   </div>
@@ -42,7 +42,12 @@ export default {
       for (let i = 0; i < lengthY; i++) {
         const row = [];
         for (let j = 0; j < lengthX; j++) {
-          row.push({ bomb: false, isActive: false, bombsCountAround: 0 });
+          row.push({
+            bomb: false,
+            isActive: false,
+            bombsCountAround: 0,
+            flag: false,
+          });
         }
         this.items.push(row);
       }
@@ -59,10 +64,10 @@ export default {
 
     checkCell(itemX, itemY) {
       const item = this.items[itemY][itemX];
-      if (!this.loseMsg && !item.isActive) {
+      if (!this.loseMsg && !item.isActive && !item.flag) {
         item.isActive = true;
         this.countBombsAround(itemX, itemY);
-      } if (item.bomb && !this.winMsg) {
+      } if (item.bomb && !this.winMsg && !item.flag) {
         this.loseMsg = true;
         this.isDisabled = true;
       }
@@ -81,6 +86,13 @@ export default {
       if (openItemsLength === cellsCount - this.bombsCount) {
         this.winMsg = true;
         this.isDisabled = true;
+      }
+    },
+
+    getFlag(itemX, itemY) {
+      const cell = this.items[itemY][itemX];
+      if (!cell.isActive && !this.winMsg && !this.loseMsg) {
+        cell.flag = !cell.flag;
       }
     },
 
@@ -129,6 +141,8 @@ export default {
         } else {
           classes.push(this.getBombsCountClass(cell));
         }
+      } else if (cell.flag) {
+        classes.push('flag');
       }
       return classes;
     },
@@ -159,6 +173,9 @@ export default {
 }
 .empty {
   background: url('../data/images/empty.png') no-repeat;
+}
+.flag {
+  background: url('../data/images/flag.png') no-repeat;
 }
 .grid1 {
   background: url('../data/images/grid1.png') no-repeat;
