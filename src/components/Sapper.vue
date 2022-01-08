@@ -148,7 +148,9 @@ export default {
         } else {
           classes.push(this.getBombsCountClass(cell));
         }
-      } else if (cell.bomb && (this.winMsg || this.loseMsg)) {
+      } else if (!cell.bomb && cell.flag && (this.winMsg || this.loseMsg)) {
+        classes.push('falseBomb');
+      } else if (cell.bomb && (this.winMsg || this.loseMsg) && !cell.flag) {
         classes.push('bomb');
       } else if (cell.flag) {
         classes.push('flag');
@@ -215,6 +217,9 @@ export default {
 }
 .bomb {
   background: url('../data/images/mine.png') no-repeat;
+}
+.falseBomb {
+  background: url('../data/images/mineFalse.png') no-repeat;
 }
 .start-btn {
   width: 60px;
