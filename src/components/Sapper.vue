@@ -90,12 +90,10 @@ export default {
     },
 
     getFlag(itemX, itemY) {
-      if (!this.items[itemY][itemX].flag && !this.items[itemY][itemX].isActive && !this.winMsg && !this.loseMsg) {
-        this.items[itemY][itemX].flag = true;
-      } else if (this.items[itemY][itemX].flag && !this.items[itemY][itemX].isActive && !this.winMsg && !this.loseMsg) {
-        this.items[itemY][itemX].flag = false;
+      const cell = this.items[itemY][itemX];
+      if (!cell.isActive && !this.winMsg && !this.loseMsg) {
+        cell.flag = !cell.flag;
       }
-      console.log(this.items[itemY][itemX].flag);
     },
 
     resetGame() {
