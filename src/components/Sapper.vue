@@ -64,10 +64,10 @@ export default {
 
     checkCell(itemX, itemY) {
       const item = this.items[itemY][itemX];
-      if (!this.loseMsg && !item.isActive) {
+      if (!this.loseMsg && !item.isActive && !item.flag) {
         item.isActive = true;
         this.countBombsAround(itemX, itemY);
-      } if (item.bomb && !this.winMsg) {
+      } if (item.bomb && !this.winMsg && !item.flag) {
         this.loseMsg = true;
         this.isDisabled = true;
       }
