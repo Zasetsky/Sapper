@@ -107,19 +107,26 @@ export default {
       let bombsAround = 0;
       if (this.items[y - 1] && this.items[y - 1][x] && this.items[y - 1][x].bomb) {
         bombsAround++;
-      } if (this.items[y - 1] && this.items[y - 1][x - 1] && this.items[y - 1][x - 1].bomb) {
+      }
+      if (this.items[y - 1] && this.items[y - 1][x - 1] && this.items[y - 1][x - 1].bomb) {
         bombsAround++;
-      } if (this.items[y][x - 1] && this.items[y][x - 1].bomb) {
+      }
+      if (this.items[y][x - 1] && this.items[y][x - 1].bomb) {
         bombsAround++;
-      } if (this.items[y + 1] && this.items[y + 1][x - 1] && this.items[y + 1][x - 1].bomb) {
+      }
+      if (this.items[y + 1] && this.items[y + 1][x - 1] && this.items[y + 1][x - 1].bomb) {
         bombsAround++;
-      } if (this.items[y + 1] && this.items[y + 1][x] && this.items[y + 1][x].bomb) {
+      }
+      if (this.items[y + 1] && this.items[y + 1][x] && this.items[y + 1][x].bomb) {
         bombsAround++;
-      } if (this.items[y + 1] && this.items[y + 1][x + 1] && this.items[y + 1][x + 1].bomb) {
+      }
+      if (this.items[y + 1] && this.items[y + 1][x + 1] && this.items[y + 1][x + 1].bomb) {
         bombsAround++;
-      } if (this.items[y][x + 1] && this.items[y][x + 1].bomb) {
+      }
+      if (this.items[y][x + 1] && this.items[y][x + 1].bomb) {
         bombsAround++;
-      } if (this.items[y - 1] && this.items[y - 1][x + 1] && this.items[y - 1][x + 1].bomb) {
+      }
+      if (this.items[y - 1] && this.items[y - 1][x + 1] && this.items[y - 1][x + 1].bomb) {
         bombsAround++;
       }
       this.items[y][x].bombsCountAround = bombsAround;
@@ -137,10 +144,14 @@ export default {
       if (cell.isActive) {
         classes.push('active');
         if (cell.bomb) {
-          classes.push('bomb');
+          classes.push('bombClicked');
         } else {
           classes.push(this.getBombsCountClass(cell));
         }
+      } else if (!cell.bomb && cell.flag && (this.winMsg || this.loseMsg)) {
+        classes.push('falseBomb');
+      } else if (cell.bomb && (this.winMsg || this.loseMsg) && !cell.flag) {
+        classes.push('bomb');
       } else if (cell.flag) {
         classes.push('flag');
       }
@@ -201,8 +212,14 @@ export default {
 .grid8 {
   background: url('../data/images/grid8.png') no-repeat;
 }
-.bomb {
+.bombClicked {
   background: url('../data/images/mineClicked.png') no-repeat;
+}
+.bomb {
+  background: url('../data/images/mine.png') no-repeat;
+}
+.falseBomb {
+  background: url('../data/images/mineFalse.png') no-repeat;
 }
 .start-btn {
   width: 60px;
