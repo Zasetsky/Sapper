@@ -1,16 +1,16 @@
 <template>
 <div>
   <div v-if="!cells.length">
-  <button class="btn-field" @click="bombsCount = 2, createField(fieldLengthX = 3, fieldLengthY = 3)">3x3</button>
-  <button class="btn-field" @click="bombsCount = 5, createField(fieldLengthX = 6, fieldLengthY = 6)">6x6</button>
-  <button class="btn-field" @click="bombsCount = 8, createField(fieldLengthX = 9, fieldLengthY = 9)">9x9</button>
+  <button class="btn-field" @click="createField(3, 3, 2)">3x3</button>
+  <button class="btn-field" @click="createField(6, 6, 5)">6x6</button>
+  <button class="btn-field" @click="createField(9, 9, 8)">9x9</button>
   </div>
   <h3 v-if="!cells.length"><a href="https://github.com/" target="_blank">Author</a></h3>
  <div class="field" oncontextmenu="return false;" :class="{disabled: isDisabled}">
     <div class="row" v-for="(row, y) in cells" :key="y">
       <button v-for="(cell, x) in row" :key="x"
            class="cell" :class="getCellClasses(cell)"
-           @click="checkCell(x, y)" @click.right="getFlag(x, y)" />
+           @click="checkCell(x, y)" @click.right="setFlag(x, y)" />
     </div>
   </div>
   <div class="btns">
@@ -63,7 +63,8 @@ export default {
   },
 
   methods: {
-    createField(lengthX, lengthY) {
+    createField(lengthX, lengthY, bombsCount) {
+      this.bombsCount = bombsCount;
       this.cells = [];
       for (let i = 0; i < lengthY; i++) {
         const row = [];
@@ -167,7 +168,7 @@ export default {
       }
     },
 
-    getFlag(x, y) {
+    setFlag(x, y) {
       const cell = this.cells[y][x];
       if (!cell.isActive && (!this.isWinMsg || !this.isLoseMsg)) {
         cell.isFlag = !cell.isFlag;
