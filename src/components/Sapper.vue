@@ -1,11 +1,10 @@
 <template>
 <div>
-  <button class="btn-field" v-if="!cells.length" @click="bombsCount = 2, createField(fieldLengthX = 3, fieldLengthY = 3)">Easy</button>
-  <br>
-  <button class="btn-field" v-if="!cells.length" @click="bombsCount = 5, createField(fieldLengthX = 6, fieldLengthY = 6)">Medium</button>
-  <br>
-  <button class="btn-field" v-if="!cells.length" @click="bombsCount = 8, createField(fieldLengthX = 9, fieldLengthY = 9)">Hard</button>
-  <br>
+  <div v-if="!cells.length">
+  <button class="btn-field" @click="bombsCount = 2, createField(fieldLengthX = 3, fieldLengthY = 3)">3x3</button>
+  <button class="btn-field" @click="bombsCount = 5, createField(fieldLengthX = 6, fieldLengthY = 6)">6x6</button>
+  <button class="btn-field" @click="bombsCount = 8, createField(fieldLengthX = 9, fieldLengthY = 9)">9x9</button>
+  </div>
   <h3 v-if="!cells.length"><a href="https://github.com/" target="_blank">Author</a></h3>
  <div class="field" oncontextmenu="return false;" :class="{disabled: isDisabled}">
     <div class="row" v-for="(row, y) in cells" :key="y">
@@ -14,9 +13,12 @@
            @click="checkCell(x, y)" @click.right="getFlag(x, y)" />
     </div>
   </div>
- <div ><button class="start-btn" v-if="cells.length" @click="resetGame()">Restart</button></div>
- <h1 v-if="isLoseMsg" class="gameower">You Lose</h1>
- <h1 v-else-if="isWinMsg" class="game-win">You Win!</h1>
+  <div class="btns">
+   <button class="menu-btn" v-if="cells.length" @click="backMenu()">Menu</button>
+   <button class="reset-btn" v-if="cells.length" @click="resetGame()">Reset</button>
+  </div>
+   <h1 v-if="isLoseMsg" class="gameower">You Lose</h1>
+   <h1 v-else-if="isWinMsg" class="game-win">You Win!</h1>
 </div>
 </template>
 
@@ -69,7 +71,7 @@ export default {
           row.push({
             isBomb: false,
             isActive: false,
-            bombsCountAround: null,
+            bombsAround: null,
             isFlag: false,
           });
         }
@@ -90,7 +92,7 @@ export default {
       if (!this.isDisabled && !cell.isActive && !cell.isFlag) {
         cell.isActive = true;
         this.countBombsAround(x, y);
-        if (cell.bombsCountAround === 0) {
+        if (cell.bombsAround === 0) {
           this.openEmptyCells(x, y);
         }
       }
@@ -107,21 +109,21 @@ export default {
         if (this.cells[y - 1][x]) {
           this.countBombsAround(x, y - 1);
           const cell = this.cells[y - 1][x];
-          if (cell.bombsCountAround === 0 && !cell.isFlag && !cell.isBomb) {
+          if (!cell.isFlag && !cell.isBomb) {
             this.checkCell(x, y - 1);
           }
         }
         if (this.cells[y - 1][x - 1]) {
           this.countBombsAround(x - 1, y - 1);
           const cell = this.cells[y - 1][x - 1];
-          if (cell.bombsCountAround === 0 && !cell.isFlag && !cell.isBomb) {
+          if (!cell.isFlag && !cell.isBomb) {
             this.checkCell(x - 1, y - 1);
           }
         }
         if (this.cells[y - 1][x + 1]) {
           this.countBombsAround(x + 1, y - 1);
           const cell = this.cells[y - 1][x + 1];
-          if (cell.bombsCountAround === 0 && !cell.isFlag && !cell.isBomb) {
+          if (!cell.isFlag && !cell.isBomb) {
             this.checkCell(x + 1, y - 1);
           }
         }
@@ -130,21 +132,21 @@ export default {
         if (this.cells[y + 1][x]) {
           this.countBombsAround(x, y + 1);
           const cell = this.cells[y + 1][x];
-          if (cell.bombsCountAround === 0 && !cell.isFlag && !cell.isBomb) {
+          if (!cell.isFlag && !cell.isBomb) {
             this.checkCell(x, y + 1);
           }
         }
         if (this.cells[y + 1][x - 1]) {
           this.countBombsAround(x - 1, y + 1);
           const cell = this.cells[y + 1][x - 1];
-          if (cell.bombsCountAround === 0 && !cell.isFlag && !cell.isBomb) {
+          if (!cell.isFlag && !cell.isBomb) {
             this.checkCell(x - 1, y + 1);
           }
         }
         if (this.cells[y + 1][x + 1]) {
           this.countBombsAround(x + 1, y + 1);
           const cell = this.cells[y + 1][x + 1];
-          if (cell.bombsCountAround === 0 && !cell.isFlag && !cell.isBomb) {
+          if (!cell.isFlag && !cell.isBomb) {
             this.checkCell(x + 1, y + 1);
           }
         }
@@ -152,14 +154,14 @@ export default {
       if (this.cells[y][x - 1]) {
         this.countBombsAround(x - 1, y);
         const cell = this.cells[y][x - 1];
-        if (cell.bombsCountAround === 0 && !cell.isFlag && !cell.isBomb) {
+        if (!cell.isFlag && !cell.isBomb) {
           this.checkCell(x - 1, y);
         }
       }
       if (this.cells[y][x + 1]) {
         this.countBombsAround(x + 1, y);
         const cell = this.cells[y][x + 1];
-        if (cell.bombsCountAround === 0 && !cell.isFlag && !cell.isBomb) {
+        if (!cell.isFlag && !cell.isBomb) {
           this.checkCell(x + 1, y);
         }
       }
@@ -172,7 +174,7 @@ export default {
       }
     },
 
-    resetGame() {
+    backMenu() {
       this.cells = [];
       this.isLoseMsg = false;
       this.isWinMsg = false;
@@ -181,44 +183,50 @@ export default {
       this.fieldLengthY = 0;
     },
 
+    resetGame() {
+      this.createField(this.fieldLengthX, this.fieldLengthY);
+      this.isLoseMsg = false;
+      this.isWinMsg = false;
+    },
+
     countBombsAround(x, y) {
-      let bombsAround = 0;
+      let bombs = 0;
       if (this.cells[y - 1]) {
         if (this.cells[y - 1][x] && this.cells[y - 1][x].isBomb) {
-          bombsAround++;
+          bombs++;
         }
         if (this.cells[y - 1][x - 1] && this.cells[y - 1][x - 1].isBomb) {
-          bombsAround++;
+          bombs++;
         }
         if (this.cells[y - 1][x + 1] && this.cells[y - 1][x + 1].isBomb) {
-          bombsAround++;
+          bombs++;
         }
       }
       if (this.cells[y + 1]) {
         if (this.cells[y + 1][x] && this.cells[y + 1][x].isBomb) {
-          bombsAround++;
+          bombs++;
         }
         if (this.cells[y + 1][x - 1] && this.cells[y + 1][x - 1].isBomb) {
-          bombsAround++;
+          bombs++;
         }
         if (this.cells[y + 1][x + 1] && this.cells[y + 1][x + 1].isBomb) {
-          bombsAround++;
+          bombs++;
         }
       }
       if (this.cells[y][x - 1] && this.cells[y][x - 1].isBomb) {
-        bombsAround++;
+        bombs++;
       }
       if (this.cells[y][x + 1] && this.cells[y][x + 1].isBomb) {
-        bombsAround++;
+        bombs++;
       }
-      this.cells[y][x].bombsCountAround = bombsAround;
+      this.cells[y][x].bombsAround = bombs;
     },
 
     getBombsCountClass(cell) {
-      if (cell.bombsCountAround === 0) {
+      if (cell.bombsAround === 0) {
         return 'empty';
       }
-      return `grid${cell.bombsCountAround}`;
+      return `grid${cell.bombsAround}`;
     },
 
     getCellClasses(cell) {
@@ -314,11 +322,23 @@ export default {
 .falseBomb {
   background: url('../data/images/mineFalse.png') no-repeat;
 }
-.start-btn {
+.btns {
+  display: flex;
+  justify-content: center;
+}
+.menu-btn {
   width: 60px;
   height: 20px;
   margin-top: 10px;
   cursor: pointer;
+  margin: 10px;
+}
+.reset-btn {
+  width: 60px;
+  height: 20px;
+  margin-top: 10px;
+  cursor: pointer;
+  margin: 10px;
 }
 .gameower {
   text-align: center;
