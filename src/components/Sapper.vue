@@ -5,7 +5,7 @@
   <button class="btn-field" @click="createField(6, 6, 5)">6x6</button>
   <button class="btn-field" @click="createField(9, 9, 8)">9x9</button>
   </div>
-  <h3 v-if="!cells.length"><a href="https://github.com/" target="_blank">Author</a></h3>
+  <h3 v-if="!cells.length"><a href="https://github.com/Zasetsky" target="_blank">Author</a></h3>
  <div class="field" oncontextmenu="return false;" :class="{disabled: isDisabled}">
     <div class="row" v-for="(row, y) in cells" :key="y">
       <button v-for="(cell, x) in row" :key="x"
