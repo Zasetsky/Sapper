@@ -91,7 +91,7 @@ export default {
 
     getFlag(itemX, itemY) {
       const cell = this.items[itemY][itemX];
-      if (!cell.isActive && (!this.winMsg || !this.loseMsg)) {
+      if (!cell.isActive && !this.winMsg && !this.loseMsg) {
         cell.flag = !cell.flag;
       }
     },
