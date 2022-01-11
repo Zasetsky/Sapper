@@ -65,6 +65,8 @@ export default {
   methods: {
     createField(lengthX, lengthY, bombsCount) {
       this.bombsCount = bombsCount;
+      this.fieldLengthX = lengthX;
+      this.fieldLengthY = lengthY;
       this.cells = [];
       for (let i = 0; i < lengthY; i++) {
         const row = [];
@@ -185,7 +187,7 @@ export default {
     },
 
     resetGame() {
-      this.createField(this.fieldLengthX, this.fieldLengthY);
+      this.createField(this.fieldLengthX, this.fieldLengthY, this.bombsCount);
       this.isLoseMsg = false;
       this.isWinMsg = false;
     },
