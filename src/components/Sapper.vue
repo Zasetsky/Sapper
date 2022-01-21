@@ -1,17 +1,24 @@
 <template>
 <div>
-  <button class="btn-field" v-if="!items.length" @click="createField(fieldLengthX, fieldLengthY)">Start</button>
+  <div v-if="!cells.length">
+  <button class="btn-field" @click="createField(3, 3, 2)">3x3</button>
+  <button class="btn-field" @click="createField(6, 6, 5)">6x6</button>
+  <button class="btn-field" @click="createField(9, 9, 8)">9x9</button>
+  </div>
+  <h3 v-if="!cells.length"><a href="https://github.com/Zasetsky" target="_blank">Author</a></h3>
  <div class="field" oncontextmenu="return false;" :class="{disabled: isDisabled}">
-    <div class="row" v-for="(row, rowIndex) in items" :key="rowIndex">
-      <div v-for="(item, index) in row" :key="index"
-           class="cell" :class="getCellClasses(item)"
-           @click="checkCell(index, rowIndex)" @click.right="getFlag(index, rowIndex)">
-      </div>
+    <div class="row" v-for="(row, y) in cells" :key="y">
+      <button v-for="(cell, x) in row" :key="x"
+           class="cell" :class="getCellClasses(cell)"
+           @click="checkCell(x, y)" @click.right="setFlag(x, y)" />
     </div>
   </div>
- <div ><button class="start-btn" v-if="items.length" @click="resetGame()">Restart</button></div>
- <h1 v-if="loseMsg" class="gameower">You Lose</h1>
- <h1 v-else-if="winMsg" class="game-win">You Win!</h1>
+  <div class="btns">
+   <button class="menu-btn" v-if="cells.length" @click="backMenu()">Menu</button>
+   <button class="reset-btn" v-if="cells.length" @click="resetGame()">Reset</button>
+  </div>
+   <h1 v-if="isLoseMsg" class="gameower">You Lose</h1>
+   <h1 v-else-if="isWinMsg" class="game-win">You Win!</h1>
 </div>
 </template>
 
@@ -25,135 +32,224 @@ export default {
   name: 'Sapper',
   data() {
     return {
-      loseMsg: false,
-      winMsg: false,
-      isDisabled: false,
-      items: [],
-      fieldLengthX: 9,
-      fieldLengthY: 9,
-      bombsCount: 8,
+      isLoseMsg: false,
+      isWinMsg: false,
+      cells: [],
+      fieldLengthX: 0,
+      fieldLengthY: 0,
+      bombsCount: 0,
     };
   },
 
-  methods: {
+  computed: {
+    openCellsLength() {
+      let openCellsLength = 0;
+      for (let y = 0; y < this.cells.length; y++) {
+        const row = this.cells[y];
+        for (let x = 0; x < row.length; x++) {
+          if (row[x].isActive) {
+            openCellsLength++;
+          }
+        }
+      }
+      return openCellsLength;
+    },
+    cellsCount() {
+      return this.fieldLengthX * this.fieldLengthY;
+    },
+    isDisabled() {
+      return this.isLoseMsg || this.isWinMsg;
+    },
+  },
 
-    createField(lengthX, lengthY) {
-      this.items = [];
+  methods: {
+    createField(lengthX, lengthY, bombsCount) {
+      this.bombsCount = bombsCount;
+      this.fieldLengthX = lengthX;
+      this.fieldLengthY = lengthY;
+      this.cells = [];
       for (let i = 0; i < lengthY; i++) {
         const row = [];
         for (let j = 0; j < lengthX; j++) {
           row.push({
-            bomb: false,
+            isBomb: false,
             isActive: false,
-            bombsCountAround: 0,
-            flag: false,
+            bombsAround: null,
+            isFlag: false,
           });
         }
-        this.items.push(row);
+        this.cells.push(row);
       }
-
       for (let bombsPlanted = 0; bombsPlanted < this.bombsCount;) {
         const x = getRandomInt(lengthX);
         const y = getRandomInt(lengthY);
-        if (!this.items[y][x].bomb) {
-          this.items[y][x].bomb = true;
+        if (!this.cells[y][x].isBomb) {
+          this.cells[y][x].isBomb = true;
           bombsPlanted++;
         }
       }
     },
 
-    checkCell(itemX, itemY) {
-      const item = this.items[itemY][itemX];
-      if (!this.loseMsg && !item.isActive && !item.flag) {
-        item.isActive = true;
-        this.countBombsAround(itemX, itemY);
-      } if (item.bomb && !this.winMsg && !item.flag) {
-        this.loseMsg = true;
-        this.isDisabled = true;
+    checkCell(x, y) {
+      const cell = this.cells[y][x];
+      if (!this.isDisabled && !cell.isActive && !cell.isFlag) {
+        cell.isActive = true;
+        this.countBombsAround(x, y);
+        if (cell.bombsAround === 0) {
+          this.openEmptyCells(x, y);
+        }
       }
+      if (cell.isBomb && !cell.isFlag) {
+        this.isLoseMsg = true;
+      }
+      if (this.openCellsLength === this.cellsCount - this.bombsCount) {
+        this.isWinMsg = true;
+      }
+    },
 
-      let openItemsLength = 0;
-      const cellsCount = this.fieldLengthX * this.fieldLengthY;
-      for (let y = 0; y < this.items.length; y++) {
-        const row = this.items[y];
-        for (let x = 0; x < row.length; x++) {
-          if (row[x].isActive) {
-            openItemsLength++;
+    openEmptyCells(x, y) {
+      if (this.cells[y - 1]) {
+        if (this.cells[y - 1][x]) {
+          this.countBombsAround(x, y - 1);
+          const cell = this.cells[y - 1][x];
+          if (!cell.isFlag && !cell.isBomb) {
+            this.checkCell(x, y - 1);
+          }
+        }
+        if (this.cells[y - 1][x - 1]) {
+          this.countBombsAround(x - 1, y - 1);
+          const cell = this.cells[y - 1][x - 1];
+          if (!cell.isFlag && !cell.isBomb) {
+            this.checkCell(x - 1, y - 1);
+          }
+        }
+        if (this.cells[y - 1][x + 1]) {
+          this.countBombsAround(x + 1, y - 1);
+          const cell = this.cells[y - 1][x + 1];
+          if (!cell.isFlag && !cell.isBomb) {
+            this.checkCell(x + 1, y - 1);
           }
         }
       }
-
-      if (openItemsLength === cellsCount - this.bombsCount) {
-        this.winMsg = true;
-        this.isDisabled = true;
+      if (this.cells[y + 1]) {
+        if (this.cells[y + 1][x]) {
+          this.countBombsAround(x, y + 1);
+          const cell = this.cells[y + 1][x];
+          if (!cell.isFlag && !cell.isBomb) {
+            this.checkCell(x, y + 1);
+          }
+        }
+        if (this.cells[y + 1][x - 1]) {
+          this.countBombsAround(x - 1, y + 1);
+          const cell = this.cells[y + 1][x - 1];
+          if (!cell.isFlag && !cell.isBomb) {
+            this.checkCell(x - 1, y + 1);
+          }
+        }
+        if (this.cells[y + 1][x + 1]) {
+          this.countBombsAround(x + 1, y + 1);
+          const cell = this.cells[y + 1][x + 1];
+          if (!cell.isFlag && !cell.isBomb) {
+            this.checkCell(x + 1, y + 1);
+          }
+        }
+      }
+      if (this.cells[y][x - 1]) {
+        this.countBombsAround(x - 1, y);
+        const cell = this.cells[y][x - 1];
+        if (!cell.isFlag && !cell.isBomb) {
+          this.checkCell(x - 1, y);
+        }
+      }
+      if (this.cells[y][x + 1]) {
+        this.countBombsAround(x + 1, y);
+        const cell = this.cells[y][x + 1];
+        if (!cell.isFlag && !cell.isBomb) {
+          this.checkCell(x + 1, y);
+        }
       }
     },
 
-    getFlag(itemX, itemY) {
-      const cell = this.items[itemY][itemX];
-      if (!cell.isActive && !this.winMsg && !this.loseMsg) {
-        cell.flag = !cell.flag;
+    setFlag(x, y) {
+      const cell = this.cells[y][x];
+      if (!cell.isActive && (!this.isWinMsg || !this.isLoseMsg)) {
+        cell.isFlag = !cell.isFlag;
       }
+    },
+
+    backMenu() {
+      this.cells = [];
+      this.isLoseMsg = false;
+      this.isWinMsg = false;
+      this.bombsCount = 0;
+      this.fieldLengthX = 0;
+      this.fieldLengthY = 0;
     },
 
     resetGame() {
-      this.createField(this.fieldLengthX, this.fieldLengthY);
-      this.loseMsg = false;
-      this.winMsg = false;
-      this.isDisabled = false;
+      this.createField(this.fieldLengthX, this.fieldLengthY, this.bombsCount);
+      this.isLoseMsg = false;
+      this.isWinMsg = false;
     },
 
     countBombsAround(x, y) {
-      let bombsAround = 0;
-      if (this.items[y - 1] && this.items[y - 1][x] && this.items[y - 1][x].bomb) {
-        bombsAround++;
+      let bombs = 0;
+      if (this.cells[y - 1]) {
+        if (this.cells[y - 1][x] && this.cells[y - 1][x].isBomb) {
+          bombs++;
+        }
+        if (this.cells[y - 1][x - 1] && this.cells[y - 1][x - 1].isBomb) {
+          bombs++;
+        }
+        if (this.cells[y - 1][x + 1] && this.cells[y - 1][x + 1].isBomb) {
+          bombs++;
+        }
       }
-      if (this.items[y - 1] && this.items[y - 1][x - 1] && this.items[y - 1][x - 1].bomb) {
-        bombsAround++;
+      if (this.cells[y + 1]) {
+        if (this.cells[y + 1][x] && this.cells[y + 1][x].isBomb) {
+          bombs++;
+        }
+        if (this.cells[y + 1][x - 1] && this.cells[y + 1][x - 1].isBomb) {
+          bombs++;
+        }
+        if (this.cells[y + 1][x + 1] && this.cells[y + 1][x + 1].isBomb) {
+          bombs++;
+        }
       }
-      if (this.items[y][x - 1] && this.items[y][x - 1].bomb) {
-        bombsAround++;
+      if (this.cells[y][x - 1] && this.cells[y][x - 1].isBomb) {
+        bombs++;
       }
-      if (this.items[y + 1] && this.items[y + 1][x - 1] && this.items[y + 1][x - 1].bomb) {
-        bombsAround++;
+      if (this.cells[y][x + 1] && this.cells[y][x + 1].isBomb) {
+        bombs++;
       }
-      if (this.items[y + 1] && this.items[y + 1][x] && this.items[y + 1][x].bomb) {
-        bombsAround++;
-      }
-      if (this.items[y + 1] && this.items[y + 1][x + 1] && this.items[y + 1][x + 1].bomb) {
-        bombsAround++;
-      }
-      if (this.items[y][x + 1] && this.items[y][x + 1].bomb) {
-        bombsAround++;
-      }
-      if (this.items[y - 1] && this.items[y - 1][x + 1] && this.items[y - 1][x + 1].bomb) {
-        bombsAround++;
-      }
-      this.items[y][x].bombsCountAround = bombsAround;
+      this.cells[y][x].bombsAround = bombs;
     },
 
     getBombsCountClass(cell) {
-      if (cell.bombsCountAround === 0) {
+      if (cell.bombsAround === 0) {
         return 'empty';
       }
-      return `grid${cell.bombsCountAround}`;
+      return `grid${cell.bombsAround}`;
     },
 
     getCellClasses(cell) {
       const classes = [];
+      if (cell.isFlag) {
+        classes.push('flag');
+      }
       if (cell.isActive) {
         classes.push('active');
-        if (cell.bomb) {
+        if (cell.isBomb) {
           classes.push('bombClicked');
         } else {
           classes.push(this.getBombsCountClass(cell));
         }
-      } else if (!cell.bomb && cell.flag && (this.winMsg || this.loseMsg)) {
-        classes.push('falseBomb');
-      } else if (cell.bomb && (this.winMsg || this.loseMsg) && !cell.flag) {
-        classes.push('bomb');
-      } else if (cell.flag) {
-        classes.push('flag');
+      } else if (this.isDisabled) {
+        if (!cell.isBomb && cell.isFlag) {
+          classes.push('falseBomb');
+        } else if (cell.isBomb && !cell.isFlag) {
+          classes.push('bomb');
+        }
       }
       return classes;
     },
@@ -169,6 +265,14 @@ export default {
 }
 .field.disabled {
   pointer-events: none;
+}
+ a{
+   text-decoration: none;
+   color: black;
+ }
+.btn-field {
+  margin: 10px;
+  cursor: pointer;
 }
 .row {
   display: flex;
@@ -221,11 +325,23 @@ export default {
 .falseBomb {
   background: url('../data/images/mineFalse.png') no-repeat;
 }
-.start-btn {
+.btns {
+  display: flex;
+  justify-content: center;
+}
+.menu-btn {
   width: 60px;
   height: 20px;
   margin-top: 10px;
   cursor: pointer;
+  margin: 10px;
+}
+.reset-btn {
+  width: 60px;
+  height: 20px;
+  margin-top: 10px;
+  cursor: pointer;
+  margin: 10px;
 }
 .gameower {
   text-align: center;
