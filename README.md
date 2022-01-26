@@ -1,3 +1,7 @@
+![Меню игры](https://github.com/Zasetsky/Sapper/blob/master/screenshots/sapper.png)
+![Победа](https://github.com/Zasetsky/Sapper/blob/master/screenshots/sapper-win.png)
+![Проигрышь](https://github.com/Zasetsky/Sapper/blob/master/screenshots/sapper-lose.png)
+
 # dev
 
 ## Project setup
